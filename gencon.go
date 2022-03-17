@@ -1,6 +1,7 @@
 package gencon
 
 import (
+	"fmt"
 	"go/ast"
 	"go/types"
 
@@ -10,6 +11,8 @@ import (
 )
 
 const doc = "gencon is ..."
+
+const message = "should not use 'any'. hint: %s"
 
 // Analyzer is ...
 var Analyzer = &analysis.Analyzer{
@@ -124,9 +127,28 @@ func run(pass *analysis.Pass) (interface{}, error) {
 						continue
 					}
 					obj := pass.TypesInfo.ObjectOf(idt)
-					if obj == anyobj {
-						pass.Reportf(name.Pos(), "change constraint of %s from any to %s", name, createUnion(m[typp]))
+					if obj != anyobj {
+						continue
 					}
+					union := createUnion(m[typp])
+					// TODO: support SuggestedFix to multiple type parameter
+					if len(field.Names) == 1 {
+						fix := analysis.SuggestedFix{
+							Message: fmt.Sprintf("change constraint of %s from any to %s", name, union),
+							TextEdits: []analysis.TextEdit{{
+								Pos:     field.Pos(),
+								End:     field.End(),
+								NewText: []byte(fmt.Sprintf("%s %s", name, union.String())),
+							}},
+						}
+						pass.Report(analysis.Diagnostic{
+							Pos:            name.Pos(),
+							Message:        fmt.Sprintf(message, union),
+							SuggestedFixes: []analysis.SuggestedFix{fix},
+						})
+						continue
+					}
+					pass.Reportf(name.Pos(), message, union)
 				}
 			}
 		}

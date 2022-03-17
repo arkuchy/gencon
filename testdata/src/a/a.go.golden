@@ -1,6 +1,6 @@
 package a
 
-func e[T any](t T) {} // want "should not use 'any'. hint: string|~int"
+func e[T string | ~int](t T) {} // want "should not use 'any'. hint: string|~int"
 
 func f[T, U any, V int](t T, u U, v V) {} // want "should not use 'any'. hint: bool|int" "should not use 'any'. hint: string|~int"
 
