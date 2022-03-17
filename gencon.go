@@ -24,12 +24,11 @@ var Analyzer = &analysis.Analyzer{
 func run(pass *analysis.Pass) (interface{}, error) {
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
-	nodeFilter := []ast.Node{
+	nodeCallExprFilter := []ast.Node{
 		(*ast.CallExpr)(nil),
 	}
-	// {objectId: {type: bool}}
-	m := make(map[string]map[types.Type]bool)
-	inspect.Preorder(nodeFilter, func(n ast.Node) {
+	m := make(map[*types.TypeParam]map[types.Type]bool)
+	inspect.Preorder(nodeCallExprFilter, func(n ast.Node) {
 		switch n := n.(type) {
 		case *ast.CallExpr:
 			var ident *ast.Ident
@@ -55,62 +54,69 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			if !ok {
 				return
 			}
-			id := pass.TypesInfo.ObjectOf(ident).Id()
-			if m[id] == nil {
-				m[id] = make(map[types.Type]bool)
+			obj := pass.TypesInfo.ObjectOf(ident)
+			sig, ok := obj.Type().(*types.Signature)
+			if !ok {
+				return
 			}
-
+			typeParams := sig.TypeParams()
 			typeArgs := instance.TypeArgs
+
+			if typeParams.Len() != typeArgs.Len() {
+				return
+			}
 			for i := 0; i < typeArgs.Len(); i++ {
-				typ := typeArgs.At(i)
-				if m[id][typ] {
+				typp := typeParams.At(i)
+				typa := typeArgs.At(i)
+				if m[typp] == nil {
+					m[typp] = make(map[types.Type]bool)
+				}
+				if m[typp][typa] {
 					continue
 				}
-				ultyp := typ.Underlying()
-				if !types.Identical(typ, ultyp) {
-					m[id][ultyp] = true
+				ultypa := typa.Underlying()
+				if !types.Identical(typa, ultypa) {
+					m[typp][ultypa] = true
 					continue
 				}
-				m[id][typ] = false
+				m[typp][typa] = false
 			}
 		}
 	})
 
-	nodeFilter = []ast.Node{
+	nodeFuncDeclFilter := []ast.Node{
 		(*ast.FuncDecl)(nil),
 	}
 
-	inspect.Preorder(nodeFilter, func(n ast.Node) {
+	anyobj := types.Universe.Lookup("any")
+	inspect.Preorder(nodeFuncDeclFilter, func(n ast.Node) {
 		switch n := n.(type) {
 		case *ast.FuncDecl:
-			id := pass.TypesInfo.ObjectOf(n.Name).Id()
+			sig, ok := pass.TypesInfo.TypeOf(n.Name).(*types.Signature)
+			if !ok {
+				return
+			}
+			typeParams := sig.TypeParams()
 			tp := n.Type.TypeParams
 			if tp == nil {
 				return
 			}
-			tps := tp.List
+			fieldList := tp.List
 
-			// TODO
-			if len(tps) > 1 {
-				return
-			}
-			for _, f := range tps {
-				// TODO
-				if len(f.Names) > 1 {
-					return
+			idx := 0
+			for _, field := range fieldList {
+				for _, name := range field.Names {
+					typp := typeParams.At(idx)
+					idx += 1
+					idt, ok := field.Type.(*ast.Ident)
+					if !ok {
+						continue
+					}
+					obj := pass.TypesInfo.ObjectOf(idt)
+					if obj == anyobj {
+						pass.Reportf(name.Pos(), "change any to %s", CreateUnion(m[typp]))
+					}
 				}
-				tv := pass.TypesInfo.Types[f.Type]
-				// FIX ME: do not compare with Type.String()
-				if tv.Type.String() == "any" {
-					pass.Reportf(f.Pos(), "change any to %s", CreateUnion(m[id]))
-				}
-				// for _, ident := range f.Names {
-				// 	object := pass.TypesInfo.ObjectOf(ident)
-				// 	fmt.Println(object.Name())
-				// 	fmt.Println(object.Type())
-				// 	fmt.Println(m[id])
-				// }
-
 			}
 		}
 	})

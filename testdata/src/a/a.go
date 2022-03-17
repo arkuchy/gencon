@@ -1,14 +1,19 @@
 package a
 
-func f[T any](t T) {} // want "change any to string|~int"
+func e[T any](t T) {} // want "change any to string|~int "
 
-func g[T, U any, V int](t T, u U, v V) {}
+func f[T, U any, V int](t T, u U, v V) {} // want "change any to int|bool" "change any to string|~int"
 
-func invoke() {
-	f("gopher")
-	f(1)
+func g(s string) {} // OK
+
+func invoke() { // OK
+	e("gopher")
+	e(1)
 	type MyInt int
-	f(MyInt(18))
+	e(MyInt(18))
 
-	g(3, "hoge", 100)
+	f(3, "gopher", 100)
+	f(true, MyInt(3), 100)
+
+	g("gopher")
 }
