@@ -1,4 +1,4 @@
-# gencon [![Go Reference](https://pkg.go.dev/badge/github.com/ari1021/gencon.svg)](https://pkg.go.dev/github.com/ari1021/gencon)]
+# gencon [![Go Reference](https://pkg.go.dev/badge/github.com/ari1021/gencon.svg)](https://pkg.go.dev/github.com/ari1021/gencon)
 
 `gencon` consists of two command, `gencon` and `fixgencon`.
 
