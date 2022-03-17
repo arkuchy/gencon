@@ -1,6 +1,6 @@
-package a // want "error"
+package a
 
-func f[T any](t T) {}
+func f[T any](t T) {} // want "change any to string|~int"
 
 func g[T, U any, V int](t T, u U, v V) {}
 

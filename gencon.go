@@ -102,7 +102,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 				tv := pass.TypesInfo.Types[f.Type]
 				// FIX ME: do not compare with Type.String()
 				if tv.Type.String() == "any" {
-					pass.Reportf(f.Pos(), "change any to %v", m[id])
+					pass.Reportf(f.Pos(), "change any to %s", CreateUnion(m[id]))
 				}
 				// for _, ident := range f.Names {
 				// 	object := pass.TypesInfo.ObjectOf(ident)
@@ -116,4 +116,13 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	})
 
 	return nil, nil
+}
+
+// CreateUnion creates *types.Union from map.
+func CreateUnion(m map[types.Type]bool) *types.Union {
+	var terms []*types.Term
+	for t, b := range m {
+		terms = append(terms, types.NewTerm(b, t))
+	}
+	return types.NewUnion(terms)
 }
