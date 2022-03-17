@@ -36,14 +36,12 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			case *ast.IndexExpr:
 				idt, ok := fun.X.(*ast.Ident)
 				if !ok {
-					// log.Fatalln("type assertion error: *ast.IndexExpr.fun.X to *ast.Ident")
 					return
 				}
 				ident = idt
 			case *ast.IndexListExpr:
 				idt, ok := fun.X.(*ast.Ident)
 				if !ok {
-					// log.Fatalln("type assertion error: *ast.IndexListExpr.fun.X to *ast.Ident")
 					return
 				}
 				ident = idt
