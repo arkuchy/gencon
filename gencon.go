@@ -125,7 +125,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 					}
 					obj := pass.TypesInfo.ObjectOf(idt)
 					if obj == anyobj {
-						pass.Reportf(name.Pos(), "change constraint of %s from any to %s", name, CreateUnion(m[typp]))
+						pass.Reportf(name.Pos(), "change constraint of %s from any to %s", name, createUnion(m[typp]))
 					}
 				}
 			}
@@ -135,8 +135,8 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	return nil, nil
 }
 
-// CreateUnion creates *types.Union from map.
-func CreateUnion(m map[types.Type]bool) *types.Union {
+// createUnion creates *types.Union from map.
+func createUnion(m map[types.Type]bool) *types.Union {
 	var terms []*types.Term
 	for t, b := range m {
 		terms = append(terms, types.NewTerm(b, t))
