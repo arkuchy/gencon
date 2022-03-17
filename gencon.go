@@ -114,7 +114,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 					}
 					obj := pass.TypesInfo.ObjectOf(idt)
 					if obj == anyobj {
-						pass.Reportf(name.Pos(), "change any to %s", CreateUnion(m[typp]))
+						pass.Reportf(name.Pos(), "change constraint of %s from any to %s", name, CreateUnion(m[typp]))
 					}
 				}
 			}
