@@ -103,6 +103,19 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			}
 			fieldList := tp.List
 
+			// we can check whether constraint is "any" or not like the following:
+			//
+			// for i := 0; i < typeParams.Len(); i++ {
+			// 	typeParam := typeParams.At(i)
+			// 	constr := typeParam.Constraint()
+			// 	typInterface, _ := constr.(*types.Interface)
+			// 	if typInterface.Empty() {
+			// 		pass.Reportf()
+			// 	}
+			// }
+			//
+			// but it can detect empty interface(interface{}) etc.
+			// so we use idx
 			idx := 0
 			for _, field := range fieldList {
 				for _, name := range field.Names {
