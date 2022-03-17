@@ -1,8 +1,8 @@
 package a
 
-func e[T any](t T) {} // want "change any to string|~int "
+func e[T any](t T) {} // want "change constraint of T from any to string|~int"
 
-func f[T, U any, V int](t T, u U, v V) {} // want "change any to int|bool" "change any to string|~int"
+func f[T, U any, V int](t T, u U, v V) {} // want "change constraint of T from any to bool|int" "change constraint of U from any to string|~int"
 
 func g(s string) {} // OK
 
