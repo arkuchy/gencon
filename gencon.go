@@ -170,6 +170,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 // createUnion creates *types.Union from map.
 func createUnion(m map[types.Type]bool) *types.Union {
 	var terms []*types.Term
+	// TODO: order of (key, value) is random. this is undesirable to test.
 	for t, b := range m {
 		terms = append(terms, types.NewTerm(b, t))
 	}
