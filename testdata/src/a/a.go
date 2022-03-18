@@ -6,6 +6,8 @@ func f[T, U any, V int](t T, u U, v V) {} // want "should not use 'any'. hint: b
 
 func g(s string) {} // OK
 
+func h[T any](t T) {} // want "should not use 'any'"
+
 func invoke() { // OK
 	e("gopher")
 	e(1)

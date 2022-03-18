@@ -12,7 +12,10 @@ import (
 
 const doc = "gencon is ..."
 
-const message = "should not use 'any'. hint: %s"
+const (
+	messageWithoutHint = "should not use 'any'"
+	messageWithHint    = "should not use 'any'. hint: %s"
+)
 
 // Analyzer is ...
 var Analyzer = &analysis.Analyzer{
@@ -131,8 +134,15 @@ func run(pass *analysis.Pass) (interface{}, error) {
 						continue
 					}
 					union := createUnion(m[typp])
+					var message string
+					if union == nil {
+						message = messageWithoutHint
+					} else {
+						message = fmt.Sprintf(messageWithHint, union.String())
+					}
+
 					// TODO: support SuggestedFix to multiple type parameter
-					if len(field.Names) == 1 {
+					if len(field.Names) == 1 && union != nil {
 						fix := analysis.SuggestedFix{
 							Message: fmt.Sprintf("change constraint of %s from any to %s", name, union),
 							TextEdits: []analysis.TextEdit{{
@@ -143,7 +153,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 						}
 						pass.Report(analysis.Diagnostic{
 							Pos:            name.Pos(),
-							Message:        fmt.Sprintf(message, union),
+							Message:        message,
 							SuggestedFixes: []analysis.SuggestedFix{fix},
 						})
 						continue
@@ -162,6 +172,9 @@ func createUnion(m map[types.Type]bool) *types.Union {
 	var terms []*types.Term
 	for t, b := range m {
 		terms = append(terms, types.NewTerm(b, t))
+	}
+	if len(terms) == 0 {
+		return nil
 	}
 	return types.NewUnion(terms)
 }
