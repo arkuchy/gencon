@@ -53,13 +53,13 @@ func f[T any](t T) {} // want "should not use 'any'. hint: string|~int"
 func g[T, U any, V int](t T, u U, v V) {} // want "should not use 'any'. hint: bool|int" "should not use 'any'. hint: string|~int"
 
 func invoke() { // OK
-	e("gopher")
-	e(1)
+	f("gopher")
+	f(1)
 	type MyInt int
-	e(MyInt(18))
+	f(MyInt(18))
 
-	f(3, "gopher", 100)
-	f(true, MyInt(3), 100)
+	g(3, "gopher", 100)
+	g(true, MyInt(3), 100)
 }
 
 --- after `fixgencon` ---
