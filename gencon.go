@@ -158,7 +158,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 						})
 						continue
 					}
-					pass.Reportf(name.Pos(), message, union)
+					pass.Reportf(name.Pos(), message)
 				}
 			}
 		}
