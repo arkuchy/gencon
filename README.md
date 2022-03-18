@@ -1,5 +1,7 @@
 # gencon [![Go Reference](https://pkg.go.dev/badge/github.com/ari1021/gencon.svg)](https://pkg.go.dev/github.com/ari1021/gencon)
 
+`gencon` is an analyzer which reports unnecessary type constraints `any`.
+
 `gencon` consists of two command, `gencon` and `fixgencon`.
 
 - `gencon`
@@ -27,6 +29,13 @@ func invoke() { // OK
 }
 ```
 
+`gencon` reports the function only with `any` constraint, not other constraints such as `comparable` or `constraints.Ordered`.
+
+If the function isn't called from anywhere, `gencon` reports without hint.
+
+We can see example of `gencon` command report [here](https://github.com/ari1021/gencon/blob/main/testdata/src/a/a.go).
+
+
 ### install
 
 ```sh
@@ -42,6 +51,7 @@ $ go vet -vettool=`which gencon` pkgname
 ## fixgencon
 
 `fixgencon` is under development and supports only single type parameter.
+
 
 ```go
 --- before `fixgencon` ---
@@ -80,6 +90,8 @@ func invoke() { // OK
 	g(true, MyInt(3), 100)
 }
 ```
+
+`fixgencon` doesn't fix `any` when the function isn't called from anywhere, because `fixgencon` doesn't know what to change from `any`.
 
 ### install
 
