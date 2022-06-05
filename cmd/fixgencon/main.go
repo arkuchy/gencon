@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/ari1021/gencon"
+	"github.com/arkuchy/gencon"
 	"golang.org/x/tools/go/analysis/singlechecker"
 )
 

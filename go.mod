@@ -1,4 +1,4 @@
-module github.com/ari1021/gencon
+module github.com/arkuchy/gencon
 
 go 1.18
 

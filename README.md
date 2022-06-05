@@ -1,4 +1,4 @@
-# gencon [![Go Reference](https://pkg.go.dev/badge/github.com/ari1021/gencon.svg)](https://pkg.go.dev/github.com/ari1021/gencon)
+# gencon [![Go Reference](https://pkg.go.dev/badge/github.com/arkuchy/gencon.svg)](https://pkg.go.dev/github.com/arkuchy/gencon)
 
 `gencon` is an analyzer which reports unnecessary type constraints `any`.
 
@@ -33,13 +33,13 @@ func invoke() { // OK
 
 If the function isn't called from anywhere, `gencon` reports without hint.
 
-We can see example of `gencon` command report [here](https://github.com/ari1021/gencon/blob/main/testdata/src/a/a.go).
+We can see example of `gencon` command report [here](https://github.com/arkuchy/gencon/blob/main/testdata/src/a/a.go).
 
 
 ### install
 
 ```sh
-$ go install github.com/ari1021/gencon/cmd/gencon@latest
+$ go install github.com/arkuchy/gencon/cmd/gencon@latest
 ```
 
 ### usage
@@ -96,7 +96,7 @@ func invoke() { // OK
 ### install
 
 ```sh
-$ go install github.com/ari1021/gencon/cmd/fixgencon@latest
+$ go install github.com/arkuchy/gencon/cmd/fixgencon@latest
 ```
 
 ### usage

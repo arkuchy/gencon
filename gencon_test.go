@@ -3,7 +3,7 @@ package gencon_test
 import (
 	"testing"
 
-	"github.com/ari1021/gencon"
+	"github.com/arkuchy/gencon"
 	"github.com/gostaticanalysis/testutil"
 	"golang.org/x/tools/go/analysis/analysistest"
 )
